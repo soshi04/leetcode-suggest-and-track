@@ -68,11 +68,12 @@ function App() {
       <h1>LeetCode User Stats</h1>
       <input
         type="text"
-        placeholder="Enter username"
+        placeholder="Enter problem name"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <button onClick={fetchLeetCodeData}>Fetch</button>
+      <p>Type in a problem using "-" for spaces and then press fetch.</p>
 
       {solved !== null && <p>{username} has solved {solved} problems!</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
