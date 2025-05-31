@@ -2,81 +2,85 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  /*
-  variables to render in and update with the app
-  */
   const [username, setUsername] = useState('');
-  const [solved, setSolved] = useState<number | null>(null);
+  const [skillData, setSkillData] = useState<any>(null); // for displaying skill breakdown
   const [error, setError] = useState('');
 
-  /*
-  the async tag on the function means we can use the keyword "await" inside it later
-  This is a syntax that makes working with Promises more readable and easier to manage.
-  async declares a function that returns a promise, and await pauses execution until a promise resolves.
-  */
-  const fetchLeetCodeData = async () => {
-    /*
-    in this query, we are defining it as a string.
-    "query questionTitle()" is the declaration with titleSlug being of type String. The ! after string
-    means its required
-
-    Inside the query, we have question(title:$title) <- this is what asks leetcode for that question
-    from it we want the title and the difficulty 
-    */
-    
-    const query = `
-      query questionTitle($titleSlug: String!) {
-        question(titleSlug: $titleSlug) {
-          title
-          difficulty
-        }
-      }
-    `;
-  
-    const variables = { titleSlug: username }; // let the input be the slug like "two-sum"
-    // this creates a json Creates a JSON object like { username: "sohumjoshi" } This matches $username from the GraphQL query.
-  
+  const fetchLeetCodeSkills = async () => {
     try {
       const response = await axios.post(
-        '/api/leetcode',
-        { query, variables },
+        '/api/skills',
+        { username }, // send { username: 'soshi04' }
         {
           headers: {
             'Content-Type': 'application/json',
-            'Referer': 'https://leetcode.com',
-            'User-Agent': 'Mozilla/5.0',
           },
         }
       );
-  
-      const question = response.data.data.question;
-      if (question) {
-        setSolved(null);
+
+      const stats = response.data.skills;
+
+      if (stats) {
+        setSkillData(stats);
         setError('');
-        alert(`${question.title} is a ${question.difficulty} problem.`);
+        console.log(stats); // view the structured skill data in the console
       } else {
-        setError('Problem not found.');
+        setSkillData(null);
+        setError('No skill data found.');
       }
     } catch (err) {
       console.error(err);
+      setSkillData(null);
       setError('Error fetching data.');
     }
   };
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>LeetCode User Stats</h1>
+      <h1>LeetCode Skill Breakdown</h1>
+
       <input
         type="text"
-        placeholder="Enter problem name"
+        placeholder="Enter LeetCode username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
-      <button onClick={fetchLeetCodeData}>Fetch</button>
-      <p>Type in a problem using "-" for spaces and then press fetch.</p>
+      <button onClick={fetchLeetCodeSkills}>Fetch Skills</button>
 
-      {solved !== null && <p>{username} has solved {solved} problems!</p>}
+      <p>Type your LeetCode username and press "Fetch Skills".</p>
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {skillData && (
+        <div>
+          <h2>Fundamental Skills</h2>
+          <ul>
+            {skillData.fundamental.map((skill: any) => (
+              <li key={skill.tagSlug}>
+                {skill.tagName}: {skill.problemsSolved} solved
+              </li>
+            ))}
+          </ul>
+
+          <h2>Intermediate Skills</h2>
+          <ul>
+            {skillData.intermediate.map((skill: any) => (
+              <li key={skill.tagSlug}>
+                {skill.tagName}: {skill.problemsSolved} solved
+              </li>
+            ))}
+          </ul>
+
+          <h2>Advanced Skills</h2>
+          <ul>
+            {skillData.advanced.map((skill: any) => (
+              <li key={skill.tagSlug}>
+                {skill.tagName}: {skill.problemsSolved} solved
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
