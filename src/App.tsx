@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from './contexts/AuthContext';
+import { Login } from './components/Login';
 
 function App() {
+  const { user, signOut } = useAuth();
   const [username, setUsername] = useState('');
   const [skillData, setSkillData] = useState<any>(null);
   const [error, setError] = useState('');
@@ -15,12 +18,14 @@ function App() {
     setLoading(true);
 
     try {
+      const idToken = await user?.getIdToken();
       const response = await axios.post(
         '/api/skills',
         { username },
         {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
           },
         }
       );
@@ -31,23 +36,54 @@ function App() {
         setSkillData(stats);
 
         // Send to LLM for advice
-        const adviceResponse = await axios.post('/api/advice', { skills: stats });
+        const adviceResponse = await axios.post(
+          '/api/advice',
+          { skills: stats },
+          {
+            headers: {
+              'Authorization': `Bearer ${idToken}`
+            }
+          }
+        );
         const recommendation = adviceResponse.data.advice;
         setAdvice(recommendation);
       } else {
         setError('No skill data found.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Error fetching data.');
+      if (err.response?.status === 403) {
+        setError('Daily limit reached. Please try again tomorrow.');
+      } else {
+        setError('Error fetching data.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  if (!user) {
+    return <Login />;
+  }
+
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: 'auto' }}>
-      <h1>LeetCode Skill Breakdown</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1>LeetCode Skill Breakdown</h1>
+        <button 
+          onClick={signOut}
+          style={{ 
+            padding: '0.5rem 1rem',
+            background: '#f44336',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Sign Out
+        </button>
+      </div>
 
       <input
         type="text"
