@@ -3,14 +3,21 @@ import axios from 'axios';
 
 function App() {
   const [username, setUsername] = useState('');
-  const [skillData, setSkillData] = useState<any>(null); // for displaying skill breakdown
+  const [skillData, setSkillData] = useState<any>(null);
   const [error, setError] = useState('');
+  const [advice, setAdvice] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchLeetCodeSkills = async () => {
+    setError('');
+    setAdvice('');
+    setSkillData(null);
+    setLoading(true);
+
     try {
       const response = await axios.post(
         '/api/skills',
-        { username }, // send { username: 'soshi04' }
+        { username },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -22,21 +29,24 @@ function App() {
 
       if (stats) {
         setSkillData(stats);
-        setError('');
-        console.log(stats); // view the structured skill data in the console
+
+        // Send to LLM for advice
+        const adviceResponse = await axios.post('/api/advice', { skills: stats });
+        const recommendation = adviceResponse.data.advice;
+        setAdvice(recommendation);
       } else {
-        setSkillData(null);
         setError('No skill data found.');
       }
     } catch (err) {
       console.error(err);
-      setSkillData(null);
       setError('Error fetching data.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: 'auto' }}>
       <h1>LeetCode Skill Breakdown</h1>
 
       <input
@@ -44,15 +54,17 @@ function App() {
         placeholder="Enter LeetCode username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        style={{ padding: '0.5rem', marginRight: '0.5rem' }}
       />
-      <button onClick={fetchLeetCodeSkills}>Fetch Skills</button>
+      <button onClick={fetchLeetCodeSkills} style={{ padding: '0.5rem' }}>Fetch Skills</button>
 
       <p>Type your LeetCode username and press "Fetch Skills".</p>
 
+      {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {skillData && (
-        <div>
+        <>
           <h2>Fundamental Skills</h2>
           <ul>
             {skillData.fundamental.map((skill: any) => (
@@ -79,6 +91,15 @@ function App() {
               </li>
             ))}
           </ul>
+        </>
+      )}
+
+      {advice && (
+        <div style={{ marginTop: '2rem' }}>
+          <h2>AI Recommendation</h2>
+          <pre style={{ background: '#f4f4f4', padding: '1rem', whiteSpace: 'pre-wrap', borderRadius: '6px' }}>
+            {advice}
+          </pre>
         </div>
       )}
     </div>
