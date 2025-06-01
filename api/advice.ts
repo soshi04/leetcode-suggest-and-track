@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
-import { admin, checkAndIncrement } from './firebase-admin';
+import { checkAndIncrement } from './firebase-admin';
+import * as admin from 'firebase-admin';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
