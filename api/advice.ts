@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
-import { checkAndIncrement } from './firebase-admin';
+import { checkAndIncrement } from './firebase-stuff';
 import * as admin from 'firebase-admin';
 
 const openai = new OpenAI({
@@ -25,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // 🔍 Verify Firebase ID token and get UID
-    console.log('🔐 Verifying Firebase token...');
+    console.log(' Verifying Firebase token...');
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
     console.log('Firebase token verified. UID:', uid);
