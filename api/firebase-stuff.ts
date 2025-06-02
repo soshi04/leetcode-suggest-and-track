@@ -1,22 +1,28 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import * as admin from 'firebase-admin';
+import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
+import { getAuth, Auth } from 'firebase-admin/auth';
 
-// Initialize Firebase Admin if it hasn't been initialized
+let app: App;
+let db: Firestore;
+let auth: Auth;
+
 if (!getApps().length) {
-    admin.initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-    console.log('Firebase Admin initialized');
-  }
+  app = initializeApp({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
+  });
+  console.log('✅ Firebase Admin initialized');
+} else {
+  app = getApps()[0]; // reuse existing app
+}
 
-export { admin };
+db = getFirestore(app);
+auth = getAuth(app);
 
-const db = getFirestore();
+export { auth, db };
 
 export async function checkAndIncrement(uid: string) {
   const today = new Date().toISOString().slice(0, 10);
@@ -31,4 +37,4 @@ export async function checkAndIncrement(uid: string) {
     await ref.set({ uid, date: today, count: 1 });
   }
   return true;
-} 
+}
