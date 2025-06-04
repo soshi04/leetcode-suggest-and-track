@@ -14,7 +14,6 @@ if (!getApps().length) {
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
   });
-  console.log('✅ Firebase Admin initialized');
 } else {
   app = getApps()[0]; // reuse existing app
 }

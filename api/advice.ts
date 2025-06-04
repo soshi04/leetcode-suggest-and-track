@@ -22,15 +22,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // 🔐 Verify Firebase ID token
-    console.log('🔐 Verifying Firebase token...');
     const decodedToken = await auth.verifyIdToken(idToken);
     const uid = decodedToken.uid;
-    console.log('✅ Firebase token verified. UID:', uid);
 
     const isAllowed = await checkAndIncrement(uid);
     if (!isAllowed) {
-      console.warn(`🚫 Daily limit reached for user ${uid}`);
       return res.status(403).json({ error: 'Daily limit reached' });
     }
 
@@ -59,9 +55,6 @@ Based on this profile, what are 3 topics this user should focus on to improve?
 For each topic, explain *why* it was chosen and recommend 1–2 free resources (YouTube or blog).
 Keep it actionable and motivational.
 `;
-
-    console.log('📩 Sending prompt to OpenAI...');
-
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [
@@ -71,11 +64,8 @@ Keep it actionable and motivational.
     });
 
     const advice = completion.choices[0].message.content;
-    console.log('✅ OpenAI response received.');
-
     return res.status(200).json({ advice });
   } catch (err: any) {
-    console.error('❌ Error in /api/advice.ts:', err.response?.data || err.message);
     return res.status(500).json({ error: 'Failed to generate advice' });
   }
 }
