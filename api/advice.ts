@@ -53,7 +53,7 @@ ${formattedSkills}
 
 Based on this profile, what are 3 topics this user should focus on to improve?
 For each topic, explain *why* it was chosen and recommend 1–2 free resources (YouTube or blog).
-Keep it actionable and motivational. Sneak in a funny pun thats really bad and obvious.
+Keep it actionable and motivational.
 `;
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
