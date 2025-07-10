@@ -51,9 +51,20 @@ ${formatSkillGroup(skills.advanced, 'Advanced')}
     const prompt = `
 ${formattedSkills}
 
-Based on this profile, what are 3 topics this user should focus on to improve?
-For each topic, explain *why* it was chosen and recommend 1–2 free resources (YouTube or blog).
-Keep it actionable and motivational.
+Based on this profile, give the user 3 topics that they should focus on to improve.
+For each topic, explain *why* it was chosen and recommend 1–2 free resources (YouTube or blog) that are relevant to the topic do not give links, just say the name of the resource (e.g. "NeetCode 150 to improve your fundamental array problems" or the name of a youtube channel/blog).
+Keep it strictly professional and actionable and follow this format:
+
+Based on your LeetCode Skill Profile, the three topics I recommend you focus on to improve are:
+
+1. **Skill 1** - reason why it was chosen and resource. 
+
+2. **Skill 2** - reason why it was chosen and resource. 
+
+3. **Skill 3** - reason why it was chosen and resource. 
+
+Short and professional motivational message to the user.
+
 `;
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
