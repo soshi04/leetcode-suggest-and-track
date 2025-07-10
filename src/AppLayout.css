@@ -1,0 +1,137 @@
+.app-container {
+  padding: 2rem;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.signout-btn {
+  padding: 0.5rem 1.2rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.signout-btn:hover {
+  background: #d32f2f;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.input-row input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.input-row button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #1976d2;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.input-row button:hover {
+  background: #125ea2;
+}
+.input-hint {
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.cards-row {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  align-items: flex-start;
+}
+
+.card {
+  background: #fff;
+  border-radius: 1.1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
+  padding: 2rem 1.5rem;
+  min-width: 320px;
+  max-width: 400px;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.skills-card h2, .advice-card h2 {
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.skills-section {
+  margin-bottom: 1.2rem;
+}
+.skills-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #1976d2;
+}
+.skills-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.skills-section li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+}
+.skill-name {
+  font-weight: 500;
+}
+.skill-count {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.advice-card {
+  background: #f8fafc;
+}
+.advice-pre {
+  background: #f4f4f4;
+  padding: 1rem;
+  white-space: pre-wrap;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin: 0;
+  color: #222;
+  font-family: inherit;
+}
+
+@media (max-width: 900px) {
+  .cards-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .card {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
